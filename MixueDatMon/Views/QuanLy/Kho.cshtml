@@ -1,0 +1,48 @@
+@model List<NguyenLieu>
+@{
+    ViewData["Title"] = "Tồn kho nguyên liệu";
+    Layout = "_StaffLayout";
+}
+<div class="actions" style="margin-bottom:1rem">
+    <a class="btn" asp-action="NhapKho">Lập phiếu nhập kho</a>
+    <a class="btn btn-ghost" asp-action="SoKho">Xem sổ kho</a>
+</div>
+
+<div class="panel">
+    <h2>Thêm nguyên liệu mới</h2>
+    <form asp-action="ThemNguyenLieu" method="post" class="inline-form">
+        <input class="input" name="tenNguyenLieu" placeholder="Tên nguyên liệu" required style="width:220px" aria-label="Tên nguyên liệu" />
+        <input class="input" name="donViTinh" placeholder="Đơn vị (g, ml, cái)" required aria-label="Đơn vị tính" />
+        <input class="input" type="number" name="soLuongToiThieu" min="0" step="0.001" value="0" aria-label="Mức tối thiểu" />
+        <button class="btn btn-sm" type="submit">Thêm</button>
+    </form>
+</div>
+
+<div class="panel table-wrap">
+    <table class="tbl">
+        <tr><th>Nguyên liệu</th><th class="num">Tồn hiện tại</th><th>Mức tối thiểu</th><th>Kiểm kê / hao hụt (+ hoặc -)</th></tr>
+        @foreach (var nl in Model)
+        {
+            var sapHet = nl.SoLuongTon <= nl.SoLuongToiThieu;
+            <tr>
+                <td><strong>@nl.TenNguyenLieu</strong></td>
+                <td class="num"><span class="badge @(sapHet ? "red" : "ok")">@nl.SoLuongTon.SoThapPhan() @nl.DonViTinh</span></td>
+                <td>
+                    <form asp-action="DatMucToiThieu" method="post" class="inline-form">
+                        <input type="hidden" name="ma" value="@nl.MaNguyenLieu" />
+                        <input class="input" style="width:100px" type="number" name="soLuongToiThieu" min="0" step="0.001" value="@nl.SoLuongToiThieu.SoThapPhan()" aria-label="Mức tối thiểu" />
+                        <button class="btn btn-sm btn-ghost" type="submit">Lưu</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="DieuChinhTon" method="post" class="inline-form">
+                        <input type="hidden" name="ma" value="@nl.MaNguyenLieu" />
+                        <input class="input" style="width:90px" type="number" name="chenhLech" step="0.001" placeholder="+/-" required aria-label="Chênh lệch" />
+                        <input class="input" name="ghiChu" placeholder="Lý do (đổ, hỏng, kiểm kê...)" aria-label="Lý do" />
+                        <button class="btn btn-sm btn-ghost" type="submit">Điều chỉnh</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

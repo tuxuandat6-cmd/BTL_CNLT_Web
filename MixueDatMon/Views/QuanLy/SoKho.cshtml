@@ -1,0 +1,21 @@
+@model List<BienDongKho>
+@{
+    ViewData["Title"] = "Sổ kho (200 biến động gần nhất)";
+    Layout = "_StaffLayout";
+}
+<div class="panel table-wrap">
+    <table class="tbl">
+        <tr><th>Thời gian</th><th>Nguyên liệu</th><th class="num">Thay đổi</th><th>Loại</th><th>Ghi chú</th></tr>
+        @foreach (var bd in Model)
+        {
+            var tenLoai = bd.LoaiBienDong == HangSoBienDong.Nhap ? "Nhập kho" : bd.LoaiBienDong == HangSoBienDong.XuatTheoDon ? "Xuất theo đơn" : "Điều chỉnh";
+            <tr>
+                <td>@bd.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@bd.NguyenLieu.TenNguyenLieu</td>
+                <td class="num"><span class="badge @(bd.SoLuongThayDoi >= 0 ? "ok" : "red")">@(bd.SoLuongThayDoi >= 0 ? "+" : "")@bd.SoLuongThayDoi.SoThapPhan() @bd.NguyenLieu.DonViTinh</span></td>
+                <td>@tenLoai</td>
+                <td>@bd.GhiChu @(bd.MaDonHang != null ? "(đơn #" + bd.MaDonHang + ")" : "")</td>
+            </tr>
+        }
+    </table>
+</div>
